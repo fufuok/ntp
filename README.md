@@ -1,5 +1,16 @@
 [![GoDoc](https://godoc.org/github.com/beevik/ntp?status.svg)](https://godoc.org/github.com/beevik/ntp)
 
+
+
+## 变动
+
+- 增加缺省的 NTP Host 列表以及助手函数:
+  - `ClockOffsetChan(ctx context.Context, interval time.Duration, hosts ...string) chan time.Duration` 启动 Simple NTP (SNTP), 周期性获取时钟偏移值
+  - `TimeChan(ctx context.Context, interval time.Duration, hosts ...string) chan time.Time` 启动 Simple NTP (SNTP), 周期性获取最新时间
+  - `HostPreferred(hosts []string) *HostResponse` 选择最快的 NTP Host
+
+- 示例: [examples](examples)
+
 ntp
 ===
 
