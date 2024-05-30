@@ -68,6 +68,7 @@ func logResponse(t *testing.T, r *Response) {
 	t.Logf("[%s]  SystemTime: %s", host, now.Format(timeFormat))
 	t.Logf("[%s]   ~TrueTime: %s", host, now.Add(r.ClockOffset).Format(timeFormat))
 	t.Logf("[%s]    XmitTime: %s", host, r.Time.Format(timeFormat))
+	t.Logf("[%s]     Version: %d", host, r.Version)
 	t.Logf("[%s]     Stratum: %d", host, r.Stratum)
 	t.Logf("[%s]       RefID: %s (0x%08x)", host, r.ReferenceString(), r.ReferenceID)
 	t.Logf("[%s]     RefTime: %s", host, r.ReferenceTime.Format(timeFormat))
@@ -270,6 +271,7 @@ func TestOfflineFixHostPort(t *testing.T) {
 		{"[::ffff:192.168.1.1]", "[::ffff:192.168.1.1]:123", ""},
 		{"[::ffff:192.168.1.1]:123", "[::ffff:192.168.1.1]:123", ""},
 		{"[::ffff:192.168.1.1]:1000", "[::ffff:192.168.1.1]:1000", ""},
+		{"", "", "address string is empty"},
 	}
 	for _, c := range cases {
 		fixed, err := fixHostPort(c.address, defaultPort)
@@ -384,6 +386,41 @@ func TestOfflineOffsetCalculationNegative(t *testing.T) {
 	expectedOffset := -time.Second / 2
 	offset := offset(t1, t2, t3, t4)
 	assert.Equal(t, expectedOffset, offset)
+}
+
+func TestOfflineOffsetCalculationNegativeBig(t *testing.T) {
+	cases := []struct {
+		ClientTime string
+		ServerTime string
+	}{
+		// both timestamps in NTP era 0 (with large difference)
+		{"1970-01-01 00:00:00", "2024-05-30 00:00:00"},
+		{"2024-05-30 00:00:00", "1970-01-01 00:00:00"},
+
+		// one timestamp in NTP era 0 and another in era 1
+		{"2047-01-01 00:00:00", "2024-01-01 00:00:00"},
+		{"2024-01-01 00:00:00", "2047-01-01 00:00:00"},
+
+		// both timestamps in NTP era 1
+		{"2047-01-01 00:00:00", "2047-02-01 00:00:00"},
+		{"2047-02-01 00:00:00", "2047-01-01 00:00:00"},
+	}
+
+	timeFormat := "2006-01-02 15:04:05"
+
+	for _, c := range cases {
+		clientTime, _ := time.Parse(timeFormat, c.ClientTime)
+		serverTime, _ := time.Parse(timeFormat, c.ServerTime)
+
+		org := toNtpTime(clientTime)
+		rec := toNtpTime(serverTime)
+		xmt := toNtpTime(serverTime.Add(1 * time.Second))
+		dst := toNtpTime(clientTime.Add(1 * time.Second))
+
+		expectedValue := serverTime.Sub(clientTime)
+		value := offset(org, rec, xmt, dst)
+		assert.Equal(t, expectedValue, value)
+	}
 }
 
 func TestOfflineReferenceString(t *testing.T) {

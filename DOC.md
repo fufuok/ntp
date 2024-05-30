@@ -6,7 +6,7 @@
 import "github.com/fufuok/ntp"
 ```
 
-Package ntp provides an implementation of a Simple NTP \(SNTP\) client capable of querying the current time from a remote NTP server.  See RFC 5905 \(https://tools.ietf.org/html/rfc5905\) for more details.
+Package ntp provides an implementation of a Simple NTP \(SNTP\) client capable of querying the current time from a remote NTP server. See RFC 5905 \(https://tools.ietf.org/html/rfc5905\) for more details.
 
 This approach grew out of a go\-nuts post by Michael Hofmann: https://groups.google.com/forum/?fromgroups#!topic/golang-nuts/FlcdMU5fkLQ
 
@@ -14,26 +14,28 @@ This approach grew out of a go\-nuts post by Michael Hofmann: https://groups.goo
 
 - [Constants](<#constants>)
 - [Variables](<#variables>)
-- [func ClockOffsetChan(ctx context.Context, interval time.Duration, hosts ...string) chan time.Duration](<#func-clockoffsetchan>)
-- [func Time(address string) (time.Time, error)](<#func-time>)
-- [func TimeChan(ctx context.Context, interval time.Duration, hosts ...string) chan time.Time](<#func-timechan>)
-- [type AuthOptions](<#type-authoptions>)
-- [type AuthType](<#type-authtype>)
-- [type Extension](<#type-extension>)
-- [type HostResponse](<#type-hostresponse>)
-  - [func HostPreferred(hosts []string) *HostResponse](<#func-hostpreferred>)
-- [type LeapIndicator](<#type-leapindicator>)
-- [type QueryOptions](<#type-queryoptions>)
-- [type Response](<#type-response>)
-  - [func GetResponse(host string) *Response](<#func-getresponse>)
-  - [func Query(address string) (*Response, error)](<#func-query>)
-  - [func QueryWithOptions(address string, opt QueryOptions) (*Response, error)](<#func-querywithoptions>)
-  - [func (r *Response) IsKissOfDeath() bool](<#func-response-iskissofdeath>)
-  - [func (r *Response) ReferenceString() string](<#func-response-referencestring>)
-  - [func (r *Response) Validate() error](<#func-response-validate>)
+- [func ClockOffsetChan\(ctx context.Context, interval time.Duration, hosts ...string\) chan time.Duration](<#ClockOffsetChan>)
+- [func Time\(address string\) \(time.Time, error\)](<#Time>)
+- [func TimeChan\(ctx context.Context, interval time.Duration, hosts ...string\) chan time.Time](<#TimeChan>)
+- [type AuthOptions](<#AuthOptions>)
+- [type AuthType](<#AuthType>)
+- [type Extension](<#Extension>)
+- [type HostResponse](<#HostResponse>)
+  - [func HostPreferred\(hosts \[\]string\) \*HostResponse](<#HostPreferred>)
+- [type LeapIndicator](<#LeapIndicator>)
+- [type QueryOptions](<#QueryOptions>)
+- [type Response](<#Response>)
+  - [func GetResponse\(host string\) \*Response](<#GetResponse>)
+  - [func Query\(address string\) \(\*Response, error\)](<#Query>)
+  - [func QueryWithOptions\(address string, opt QueryOptions\) \(\*Response, error\)](<#QueryWithOptions>)
+  - [func \(r \*Response\) IsKissOfDeath\(\) bool](<#Response.IsKissOfDeath>)
+  - [func \(r \*Response\) ReferenceString\(\) string](<#Response.ReferenceString>)
+  - [func \(r \*Response\) Validate\(\) error](<#Response.Validate>)
 
 
 ## Constants
+
+<a name="LeapNoWarning"></a>
 
 ```go
 const (
@@ -53,6 +55,8 @@ const (
 
 ## Variables
 
+<a name="ErrAuthFailed"></a>
+
 ```go
 var (
     ErrAuthFailed             = errors.New("authentication failed")
@@ -71,6 +75,7 @@ var (
 )
 ```
 
+<a name="ClockOffsetChan"></a>
 ## func [ClockOffsetChan](<https://github.com/fufuok/ntp/blob/master/ntpdate.go#L41>)
 
 ```go
@@ -79,7 +84,8 @@ func ClockOffsetChan(ctx context.Context, interval time.Duration, hosts ...strin
 
 ClockOffsetChan 启动 Simple NTP \(SNTP\), 周期性获取时钟偏移值
 
-## func [Time](<https://github.com/fufuok/ntp/blob/master/ntp.go#L442>)
+<a name="Time"></a>
+## func [Time](<https://github.com/fufuok/ntp/blob/master/ntp.go#L450>)
 
 ```go
 func Time(address string) (time.Time, error)
@@ -89,6 +95,7 @@ Time returns the current, corrected local time using information returned from t
 
 The server address is of the form "host", "host:port", "host%zone:port", "\[host\]:port" or "\[host%zone\]:port". The host may contain an IPv4, IPv6 or domain name address. When specifying both a port and an IPv6 address, one of the bracket formats must be used. If no port is included, NTP default port 123 is used.
 
+<a name="TimeChan"></a>
 ## func [TimeChan](<https://github.com/fufuok/ntp/blob/master/ntpdate.go#L90>)
 
 ```go
@@ -97,6 +104,7 @@ func TimeChan(ctx context.Context, interval time.Duration, hosts ...string) chan
 
 TimeChan 启动 Simple NTP \(SNTP\), 周期性获取最新时间
 
+<a name="AuthOptions"></a>
 ## type [AuthOptions](<https://github.com/fufuok/ntp/blob/master/auth.go#L37-L52>)
 
 AuthOptions contains fields used to configure symmetric key authentication for an NTP query.
@@ -120,6 +128,7 @@ type AuthOptions struct {
 }
 ```
 
+<a name="AuthType"></a>
 ## type [AuthType](<https://github.com/fufuok/ntp/blob/master/auth.go#L23>)
 
 AuthType specifies the cryptographic hash algorithm used to generate a symmetric key authentication digest \(or CMAC\) for an NTP message. Please note that MD5 and SHA1 are no longer considered secure; they appear here solely for compatibility with existing NTP server implementations.
@@ -127,6 +136,8 @@ AuthType specifies the cryptographic hash algorithm used to generate a symmetric
 ```go
 type AuthType int
 ```
+
+<a name="AuthNone"></a>
 
 ```go
 const (
@@ -140,7 +151,8 @@ const (
 )
 ```
 
-## type [Extension](<https://github.com/fufuok/ntp/blob/master/ntp.go#L185-L195>)
+<a name="Extension"></a>
+## type [Extension](<https://github.com/fufuok/ntp/blob/master/ntp.go#L190-L200>)
 
 An Extension adds custom behaviors capable of modifying NTP packets before being sent to the server and processing packets after being received by the server.
 
@@ -158,7 +170,10 @@ type Extension interface {
 }
 ```
 
+<a name="HostResponse"></a>
 ## type [HostResponse](<https://github.com/fufuok/ntp/blob/master/ntpdate.go#L35-L38>)
+
+
 
 ```go
 type HostResponse struct {
@@ -167,6 +182,7 @@ type HostResponse struct {
 }
 ```
 
+<a name="HostPreferred"></a>
 ### func [HostPreferred](<https://github.com/fufuok/ntp/blob/master/ntpdate.go#L128>)
 
 ```go
@@ -175,6 +191,7 @@ func HostPreferred(hosts []string) *HostResponse
 
 HostPreferred 选择最快的 NTP Host
 
+<a name="LeapIndicator"></a>
 ## type [LeapIndicator](<https://github.com/fufuok/ntp/blob/master/ntp.go#L45>)
 
 The LeapIndicator is used to warn if a leap second should be inserted or deleted in the last minute of the current month.
@@ -183,7 +200,8 @@ The LeapIndicator is used to warn if a leap second should be inserted or deleted
 type LeapIndicator uint8
 ```
 
-## type [QueryOptions](<https://github.com/fufuok/ntp/blob/master/ntp.go#L199-L242>)
+<a name="QueryOptions"></a>
+## type [QueryOptions](<https://github.com/fufuok/ntp/blob/master/ntp.go#L204-L247>)
 
 QueryOptions contains configurable options used by the QueryWithOptions function.
 
@@ -234,7 +252,8 @@ type QueryOptions struct {
 }
 ```
 
-## type [Response](<https://github.com/fufuok/ntp/blob/master/ntp.go#L246-L318>)
+<a name="Response"></a>
+## type [Response](<https://github.com/fufuok/ntp/blob/master/ntp.go#L251-L326>)
 
 A Response contains time data, some of which is returned by the NTP server and some of which is calculated by this client.
 
@@ -256,6 +275,9 @@ type Response struct {
 
     // Precision is the reported precision of the server's clock.
     Precision time.Duration
+
+    // Version is the NTP protocol version number reported by the server.
+    Version int
 
     // Stratum is the "stratum level" of the server. The smaller the number,
     // the closer the server is to the reference clock. Stratum 1 servers are
@@ -313,6 +335,7 @@ type Response struct {
 }
 ```
 
+<a name="GetResponse"></a>
 ### func [GetResponse](<https://github.com/fufuok/ntp/blob/master/ntpdate.go#L165>)
 
 ```go
@@ -321,7 +344,8 @@ func GetResponse(host string) *Response
 
 GetResponse 获取 NTP 响应, 无效值返回 nil
 
-### func [Query](<https://github.com/fufuok/ntp/blob/master/ntp.go#L417>)
+<a name="Query"></a>
+### func [Query](<https://github.com/fufuok/ntp/blob/master/ntp.go#L425>)
 
 ```go
 func Query(address string) (*Response, error)
@@ -331,7 +355,8 @@ Query requests time data from a remote NTP server. The response contains informa
 
 The server address is of the form "host", "host:port", "host%zone:port", "\[host\]:port" or "\[host%zone\]:port". The host may contain an IPv4, IPv6 or domain name address. When specifying both a port and an IPv6 address, one of the bracket formats must be used. If no port is included, NTP default port 123 is used.
 
-### func [QueryWithOptions](<https://github.com/fufuok/ntp/blob/master/ntp.go#L424>)
+<a name="QueryWithOptions"></a>
+### func [QueryWithOptions](<https://github.com/fufuok/ntp/blob/master/ntp.go#L432>)
 
 ```go
 func QueryWithOptions(address string, opt QueryOptions) (*Response, error)
@@ -339,7 +364,8 @@ func QueryWithOptions(address string, opt QueryOptions) (*Response, error)
 
 QueryWithOptions performs the same function as Query but allows for the customization of certain query behaviors. See the comments for Query and QueryOptions for further details.
 
-### func \(\*Response\) [IsKissOfDeath](<https://github.com/fufuok/ntp/blob/master/ntp.go#L323>)
+<a name="Response.IsKissOfDeath"></a>
+### func \(\*Response\) [IsKissOfDeath](<https://github.com/fufuok/ntp/blob/master/ntp.go#L331>)
 
 ```go
 func (r *Response) IsKissOfDeath() bool
@@ -347,7 +373,8 @@ func (r *Response) IsKissOfDeath() bool
 
 IsKissOfDeath returns true if the response is a "kiss of death" from the remote server. If this function returns true, you may examine the response's KissCode value to determine the reason for the kiss of death.
 
-### func \(\*Response\) [ReferenceString](<https://github.com/fufuok/ntp/blob/master/ntp.go#L334>)
+<a name="Response.ReferenceString"></a>
+### func \(\*Response\) [ReferenceString](<https://github.com/fufuok/ntp/blob/master/ntp.go#L342>)
 
 ```go
 func (r *Response) ReferenceString() string
@@ -355,14 +382,13 @@ func (r *Response) ReferenceString() string
 
 ReferenceString returns the response's ReferenceID value formatted as a string. If the response's stratum is zero, then the "kiss o' death" string is returned. If stratum is one, then the server is a reference clock and the reference clock's name is returned. If stratum is two or greater, then the ID is either an IPv4 address or an MD5 hash of the IPv6 address; in either case the reference string is reported as 4 dot\-separated decimal\-based integers.
 
-### func \(\*Response\) [Validate](<https://github.com/fufuok/ntp/blob/master/ntp.go#L363>)
+<a name="Response.Validate"></a>
+### func \(\*Response\) [Validate](<https://github.com/fufuok/ntp/blob/master/ntp.go#L371>)
 
 ```go
 func (r *Response) Validate() error
 ```
 
 Validate checks if the response is valid for the purposes of time synchronization.
-
-
 
 Generated by [gomarkdoc](<https://github.com/princjef/gomarkdoc>)

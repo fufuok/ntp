@@ -1,3 +1,46 @@
+Release v1.4.3
+==============
+
+**Fixes**
+
+* Fixed an overflow bug in the clock offset calculation introduced by
+  release v1.4.2.
+
+Release v1.4.2
+==============
+
+**Fixes**
+
+* Fixed a bug in clock offset calculation.
+
+Release v1.4.1
+==============
+
+**Updates**
+
+* Upgraded package dependencies to retrieve security fixes.
+
+Release v1.4.0
+==============
+
+**Changes**
+
+* Added a protocol `Version` field to the `Response` struct.
+
+Release v1.3.1
+==============
+
+**Changes**
+
+* Added AES-256-CMAC support for symmetric authentication.
+* Symmetric auth keys may now be specified as ASCII or HEX using the "ASCII:"
+  or "HEX:" prefixes.
+* Updated dependencies to address security issues.
+
+**Fixes**
+
+* Added proper handling of the empty string when used as a server address.
+
 Release v1.3.0
 ==============
 
