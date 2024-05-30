@@ -639,7 +639,8 @@ func defaultDialer(localAddress, remoteAddress string) (net.Conn, error) {
 
 // dialWrapper is used to wrap the deprecated Dial callback in QueryOptions.
 func dialWrapper(la, ra string,
-	dial func(la string, lp int, ra string, rp int) (net.Conn, error)) (net.Conn, error) {
+	dial func(la string, lp int, ra string, rp int) (net.Conn, error),
+) (net.Conn, error) {
 	rhost, rport, err := net.SplitHostPort(ra)
 	if err != nil {
 		return nil, err

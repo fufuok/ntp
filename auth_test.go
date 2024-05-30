@@ -45,7 +45,7 @@ func TestOnlineAuthenticatedQuery(t *testing.T) {
 		return
 	}
 
-	var errAuthFail = errors.New("timeout")
+	errAuthFail := errors.New("timeout")
 
 	cases := []struct {
 		Type        AuthType
